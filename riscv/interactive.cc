@@ -623,9 +623,13 @@ void sim_t::interactive_reg(const std::string& cmd, const std::vector<std::strin
       out << std::setfill(' ') << std::setw(4) << xpr_name[r]
           << ": 0x" << std::setfill('0') << std::setw(max_xlen/4)
           << zext(p->get_state()->XPR[r], max_xlen);
+          
       if ((r + 1) % 4 == 0)
         out << std::endl;
     }
+    out << "\nbank_rs1 " << p->get_state()->regfile_config_rs1
+          << "\nbank_rs2 " << p->get_state()->regfile_config_rs2
+          << "\nbank_rd \n" << p->get_state()->regfile_config_rd;
   } else {
     out << "0x" << std::setfill('0') << std::setw(max_xlen/4)
         << zext(get_reg(args), max_xlen) << std::endl;

@@ -75,6 +75,11 @@ struct state_t
   regfile_t<reg_t, NXPR, true> XPR;
   regfile_t<freg_t, NFPR, false> FPR;
 
+  //this register holds the register banks allocated for rs1, rs2 and rd
+  reg_t regfile_config_rs1;
+  reg_t regfile_config_rs2;
+  reg_t regfile_config_rd;
+
   // control and status registers
   std::unordered_map<reg_t, csr_t_p> csrmap;
   reg_t prv;    // TODO: Can this be an enum instead?
