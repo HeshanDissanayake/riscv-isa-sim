@@ -23,6 +23,10 @@
 #define RS3 READ_REG(insn.rs3())
 #define WRITE_RD(value) WRITE_REG(insn.rd(), value)
 
+#define REG_SWITCH ({STATE.regfile_config_rs1 = insn.rs1(); \
+                                   STATE.regfile_config_rs2 = insn.rs2(); \
+                                   STATE.regfile_config_rd = insn.rs3();})
+
 /* 0 : int
  * 1 : floating
  * 2 : vector reg
