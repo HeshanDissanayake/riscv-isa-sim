@@ -18,14 +18,19 @@
 #define READ_REG(reg) (CHECK_REG(reg), STATE.XPR[reg])
 #define READ_FREG(reg) STATE.FPR[reg]
 #define RD READ_REG(insn.rd())
-#define RS1 READ_REG(insn.rs1())
-#define RS2 READ_REG(insn.rs2())
+#define RS1 READ_REG(insn.rs1() + RS1_BANK*32)
+#define RS2 READ_REG(insn.rs2() + RS2_BANK*32)
 #define RS3 READ_REG(insn.rs3())
-#define WRITE_RD(value) WRITE_REG(insn.rd(), value)
 
-#define REG_SWITCH ({STATE.regfile_config_rs1 = insn.rs1(); \
-                                   STATE.regfile_config_rs2 = insn.rs2(); \
-                                   STATE.regfile_config_rd = insn.rs3();})
+#define RS1_BANK STATE.regfile_config_rs1
+#define RS2_BANK STATE.regfile_config_rs2
+#define RD_BANK STATE.regfile_config_rd
+
+#define WRITE_RD(value) WRITE_REG(insn.rd()+RD_BANK*32, value)
+
+#define REG_SWITCH ({RS1_BANK = insn.rs1(); \
+                     RS2_BANK = insn.rs2(); \
+                     RD_BANK = insn.rd();})
 
 /* 0 : int
  * 1 : floating
