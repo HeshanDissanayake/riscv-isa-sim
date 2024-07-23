@@ -378,6 +378,7 @@ private:
   uint32_t id;
   unsigned xlen;
   bool histogram_enabled;
+  bool opcode_historam_enabled;
   bool log_commits_enabled;
   FILE *log_file;
   std::ostream sout_; // needed for socket command interface -s, also used for -d and -l, but not for --log
