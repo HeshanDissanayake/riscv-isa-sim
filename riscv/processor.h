@@ -326,7 +326,7 @@ public:
   void set_privilege(reg_t, bool);
   const char* get_privilege_string();
   void update_histogram(reg_t pc);
-  void update_opcdoe_histogram(insn_t insn);
+  void update_opcode_histogram(insn_t insn);
   const disassembler_t* get_disassembler() { return disassembler; }
 
   FILE *get_log_file() { return log_file; }

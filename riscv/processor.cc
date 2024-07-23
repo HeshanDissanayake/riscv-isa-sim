@@ -94,6 +94,14 @@ processor_t::~processor_t()
       fprintf(stderr, "%0" PRIx64 " %" PRIu64 "\n", it.first, it.second);
   }
 
+
+  if (opcode_histogram_enabled)
+  {
+    for (auto it : opcode_histogram)
+      fprintf(stderr, "%s - %ld\n", it.first.c_str(), it.second);
+
+  }
+
   delete mmu;
   delete disassembler;
 }

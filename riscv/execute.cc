@@ -158,7 +158,7 @@ inline void processor_t::update_histogram(reg_t pc)
 }
 
 
-inline void processor_t::update_opcdoe_histogram(insn_t insn)
+inline void processor_t::update_opcode_histogram(insn_t insn)
 {
   if (opcode_histogram_enabled)
     {
@@ -209,7 +209,7 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
     throw;
   }
   p->update_histogram(pc);
-  p->update_opcdoe_histogram(fetch.insn);
+  p->update_opcode_histogram(fetch.insn);
 
   return npc;
 }
@@ -217,7 +217,7 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
 bool processor_t::slow_path()
 {
   return debug || state.single_step != state.STEP_NONE || state.debug_mode ||
-         log_commits_enabled || histogram_enabled || in_wfi || check_triggers_icount;
+         log_commits_enabled || histogram_enabled || opcode_histogram_enabled || in_wfi || check_triggers_icount;
 }
 
 // fetch/decode/execute loop
