@@ -157,6 +157,17 @@ inline void processor_t::update_histogram(reg_t pc)
     pc_histogram[pc]++;
 }
 
+
+inline void processor_t::update_opcdoe_histogram(insn_t insn)
+{
+  if (opcode_histogram_enabled)
+    {
+      const char* opcode_name = disassembler->lookup(insn)->get_name();
+      // printf("--->%s\n", opcode_name);
+      opcode_histogram[opcode_name]++;
+    }
+}
+
 // These two functions are expected to be inlined by the compiler separately in
 // the processor_t::step() loop. The logged variant is used in the slow path
 static inline reg_t execute_insn_fast(processor_t* p, reg_t pc, insn_fetch_t fetch) {
@@ -198,6 +209,7 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
     throw;
   }
   p->update_histogram(pc);
+  p->update_opcdoe_histogram(fetch.insn);
 
   return npc;
 }

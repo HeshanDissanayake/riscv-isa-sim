@@ -326,6 +326,7 @@ public:
   void set_privilege(reg_t, bool);
   const char* get_privilege_string();
   void update_histogram(reg_t pc);
+  void update_opcdoe_histogram(insn_t insn);
   const disassembler_t* get_disassembler() { return disassembler; }
 
   FILE *get_log_file() { return log_file; }
@@ -378,7 +379,7 @@ private:
   uint32_t id;
   unsigned xlen;
   bool histogram_enabled;
-  bool opcode_historam_enabled;
+  bool opcode_histogram_enabled;
   bool log_commits_enabled;
   FILE *log_file;
   std::ostream sout_; // needed for socket command interface -s, also used for -d and -l, but not for --log
@@ -395,6 +396,8 @@ private:
   std::vector<insn_desc_t> instructions;
   std::vector<insn_desc_t> custom_instructions;
   std::unordered_map<reg_t,uint64_t> pc_histogram;
+  std::unordered_map<std::string,uint64_t> opcode_histogram;
+
 
   static const size_t OPCODE_CACHE_SIZE = 4095;
   opcode_cache_entry_t opcode_cache[OPCODE_CACHE_SIZE];
