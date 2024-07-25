@@ -4,5 +4,6 @@ if (xlen == 32) {
   WRITE_RD_PAIR(MMU.load<int64_t>(RS1 + insn.i_imm()));
 } else {
   WRITE_RD(MMU.load<int64_t>(RS1 + insn.i_imm()));
+  // printf("rs1: %ld imm: %ld\n ",RS1, insn.i_imm());
 }
 

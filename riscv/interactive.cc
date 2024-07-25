@@ -626,6 +626,9 @@ void sim_t::interactive_reg(const std::string& cmd, const std::vector<std::strin
           
       if ((r + 1) % 4 == 0)
         out << std::endl;
+
+      if ((r + 1) % 32 == 0)
+        out << std::endl;
     }
     out << "\nbank_rs1 " << p->get_state()->regfile_config_rs1
           << "\nbank_rs2 " << p->get_state()->regfile_config_rs2

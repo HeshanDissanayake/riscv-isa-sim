@@ -5,4 +5,5 @@ if (xlen == 32) {
   WRITE_RVC_RS2S_PAIR(MMU.load<int64_t>(RVC_RS1S + insn.rvc_ld_imm()));
 } else {
   WRITE_RVC_RS2S(MMU.load<int64_t>(RVC_RS1S + insn.rvc_ld_imm()));
+  // printf("dest: RVC_RS1S(source): imm:",insn.rvc_rs1s(), RVC_RS1S, insn.rvc_ld_imm() );
 }

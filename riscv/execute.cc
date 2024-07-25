@@ -171,16 +171,25 @@ inline void processor_t::update_opcode_histogram(insn_t insn)
 // These two functions are expected to be inlined by the compiler separately in
 // the processor_t::step() loop. The logged variant is used in the slow path
 static inline reg_t execute_insn_fast(processor_t* p, reg_t pc, insn_fetch_t fetch) {
-  p->get_state()->regfile_config_rs1 = 0;
-  p->get_state()->regfile_config_rs2 = 0;
-  p->get_state()->regfile_config_rd = 0;
+  if (!p->get_state()->reg_switched){
+    p->get_state()->regfile_config_rs1 = 0;
+    p->get_state()->regfile_config_rs2 = 0;
+    p->get_state()->regfile_config_rd = 0;
+  }
+
+  p->get_state()->reg_switched = false;
   return fetch.func(p, fetch.insn, pc);
 }
 static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t fetch)
 { 
-  p->get_state()->regfile_config_rs1 = 0;
-  p->get_state()->regfile_config_rs2 = 0;
-  p->get_state()->regfile_config_rd = 0;
+  if (!p->get_state()->reg_switched){
+    p->get_state()->regfile_config_rs1 = 0;
+    p->get_state()->regfile_config_rs2 = 0;
+    p->get_state()->regfile_config_rd = 0;
+  }
+
+  p->get_state()->reg_switched = false;
+  
   if (p->get_log_commits_enabled()) {
     commit_log_reset(p);
     commit_log_stash_privilege(p);

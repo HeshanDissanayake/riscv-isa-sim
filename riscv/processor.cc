@@ -150,6 +150,8 @@ void state_t::reset(processor_t* const proc, reg_t max_isa)
   regfile_config_rs2=0;
   regfile_config_rd=0;
 
+  reg_switched=false;
+
   XPR.reset();
   FPR.reset();
 
