@@ -93,7 +93,7 @@ processor_t::~processor_t()
     for (auto it : ordered_histo)
       fprintf(stderr, "%0" PRIx64 " %" PRIu64 "\n", it.first, it.second);
   }
-
+  
 
   if (opcode_histogram_enabled)
   {
