@@ -6,6 +6,7 @@
 #include "disasm.h"
 #include "decode_macros.h"
 #include <cassert>
+#include <cstring>  
 
 static void commit_log_reset(processor_t* p)
 {
@@ -168,10 +169,43 @@ inline void processor_t::update_opcode_histogram(insn_t insn)
     }
 }
 
+const char* processor_t::print_opcode_name(insn_t insn)
+{
+  const char* opcode_name = disassembler->lookup(insn)->get_name();
+  //  printf("prev inst Name: %s\n", opcode_name);
+  return opcode_name;
+}
+
 // These two functions are expected to be inlined by the compiler separately in
 // the processor_t::step() loop. The logged variant is used in the slow path
 static inline reg_t execute_insn_fast(processor_t* p, reg_t pc, insn_fetch_t fetch) {
+  insn_t insn = fetch.insn;
+  
+  // Debug code additions  --------------------------
+  p->get_state()->curr_pc = insn;
+
+  if(pc == 0x11164){ // 11164 - extra   1117c - norm
+    if(!p->get_state()->locked){
+      p->get_state()->locked = 1;
+    }
+  }
+
+  if (p->get_state()->locked){
+    if(p->get_state()->inst_count < 1000){
+      // printf("0x%016lx \n", pc);
+    }
+    p->get_state()->inst_count++;
+  }
+
+  p->get_state()->prev_inst = fetch.insn;
+  p->get_state()->prev_pc = pc;
+
+ // Debug code additions  --------------------------
+
+ 
+
   if (!p->get_state()->reg_switched){
+    
     p->get_state()->regfile_config_rs1 = 0;
     p->get_state()->regfile_config_rs2 = 0;
     p->get_state()->regfile_config_rd = 0;
@@ -182,6 +216,11 @@ static inline reg_t execute_insn_fast(processor_t* p, reg_t pc, insn_fetch_t fet
 }
 static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t fetch)
 { 
+  // printf("its pc %ld rs1: %ld  rs2: %ld  rd: %ld \n", pc, p->get_state()->regfile_config_rs1, p->get_state()->regfile_config_rs2, p->get_state()->regfile_config_rd);
+  if(pc == 0x11538 ){
+    // printf("its pc \n");
+  }
+
   if (!p->get_state()->reg_switched){
     p->get_state()->regfile_config_rs1 = 0;
     p->get_state()->regfile_config_rs2 = 0;

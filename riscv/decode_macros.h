@@ -33,6 +33,9 @@
                      RD_BANK = insn.rd();   \
                      STATE.reg_switched = true;})
 
+#define REG_SWITCH_C ({STATE.regsw_state = insn.rs1() << 16 | insn.rs2() << 11 | insn.s_imm(); \
+                       STATE.regsw_counter = REGSW_QUOTA; })
+
 /* 0 : int
  * 1 : floating
  * 2 : vector reg

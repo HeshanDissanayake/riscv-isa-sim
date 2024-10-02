@@ -1,3 +1,8 @@
+
+
+// printf("mret --> rs1: %ld rs2: %ld rd: %ld\n", p->get_state()->last_regfile_config_rs1, p->get_state()->last_regfile_config_rs2, p->get_state()->last_regfile_config_rd);
+
+
 require_extension('S');
 reg_t prev_hstatus = STATE.hstatus->read();
 if (STATE.v) {
@@ -36,3 +41,9 @@ if (STATE.prv == PRV_S) {
 
 STATE.sstatus->write(s);
 p->set_privilege(prev_prv, prev_virt);
+p->get_state()->interupt_triggered = 0;
+
+p->get_state()->regfile_config_rs1 = p->get_state()->last_regfile_config_rs1;
+p->get_state()->regfile_config_rs2 = p->get_state()->last_regfile_config_rs2;
+p->get_state()->regfile_config_rd = p->get_state()->last_regfile_config_rd;
+p->get_state()->reg_switched = true;

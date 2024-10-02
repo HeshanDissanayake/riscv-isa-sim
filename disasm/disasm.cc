@@ -974,6 +974,9 @@ void disassembler_t::add_instructions(const isa_parser_t* isa)
 
   /*new instruction - regsw(register file switching)*/
   DEFINE_RTYPE(regsw);
+  DEFINE_XSTORE(regsw_c);
+
+
 
   DEFINE_ITYPE(slti);
   add_insn(new disasm_insn_t("seqz", match_sltiu | (1 << imm_shift), mask_sltiu | mask_imm, {&xrd, &xrs1}));

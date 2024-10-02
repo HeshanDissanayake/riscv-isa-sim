@@ -58,6 +58,7 @@ sim_t::sim_t(const cfg_t *cfg, bool halted,
     current_proc(0),
     debug(false),
     histogram_enabled(false),
+    opcode_histogram_enabled(false),
     log(false),
     remote_bitbang(NULL),
     debug_module(this, dm_config)
@@ -299,6 +300,14 @@ void sim_t::set_histogram(bool value)
   histogram_enabled = value;
   for (size_t i = 0; i < procs.size(); i++) {
     procs[i]->set_histogram(histogram_enabled);
+  }
+}
+
+void sim_t::set_opcode_histogram(bool value)
+{
+  opcode_histogram_enabled = value;
+  for (size_t i = 0; i < procs.size(); i++) {
+    procs[i]->set_opcode_histogram(opcode_histogram_enabled);
   }
 }
 

@@ -220,6 +220,11 @@ public:
   {
     reset();
   }
+  T get_regfile()
+  {
+    
+    return data;
+  }
   void reset()
   {
     memset(data, 0, sizeof(data));

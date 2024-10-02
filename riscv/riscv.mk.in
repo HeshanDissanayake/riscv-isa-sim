@@ -85,6 +85,7 @@ riscv_insn_ext_i = \
 	add \
 	addi \
 	regsw \
+	regsw_c \
 	addiw \
 	addw \
 	and \

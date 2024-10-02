@@ -19,6 +19,8 @@
 #include "vector_unit.h"
 
 #define N_HPMCOUNTERS 29
+#define LENGTH_LOG 100
+#define REGSW_QUOTA 7
 
 class processor_t;
 class mmu_t;
@@ -66,21 +68,48 @@ typedef std::unordered_map<reg_t, freg_t> commit_log_reg_t;
 // addr, value, size
 typedef std::vector<std::tuple<reg_t, uint64_t, uint8_t>> commit_log_mem_t;
 
+typedef struct{
+    reg_t pc;
+     regfile_t<reg_t, NXPR, true> reg_file[NXPR];
+} reg_log;
+
 // architectural state of a RISC-V hart
 struct state_t
 {
   void reset(processor_t* const proc, reg_t max_isa);
 
+  int reglog_idx = 0;
+  int total_reglogs = 0;
+  reg_log register_log[LENGTH_LOG];
+
+
+
   reg_t pc;
+  reg_t prev_pc;
+  uint64_t inst_count;
+
+  reg_t regsw_state; 
+  reg_t regsw_counter = REGSW_QUOTA;
+
+  insn_t curr_pc;
+  insn_t prev_inst;
+  reg_t search_pc;
+  uint64_t locked = 0;
+
+  reg_t interupt_triggered = 0;
+  reg_t temp = 1;
+
   regfile_t<reg_t, NXPR, true> XPR;
   regfile_t<freg_t, NFPR, false> FPR;
-
-
 
   //this register holds the register banks allocated for rs1, rs2 and rd
   reg_t regfile_config_rs1;
   reg_t regfile_config_rs2;
   reg_t regfile_config_rd;
+
+  reg_t last_regfile_config_rs1;
+  reg_t last_regfile_config_rs2;
+  reg_t last_regfile_config_rd;
 
   // this will be true if a regsw instruction has called and will be deaserted in the immediate next instruciton
   bool reg_switched;
@@ -254,8 +283,16 @@ public:
   const isa_parser_t &get_isa() { return *isa; }
   const cfg_t &get_cfg() { return *cfg; }
 
+  // void add_reglog(){
+  //   state.register_log[state.reglog_idx].pc = state.pc;
+  //   std::copy(std::begin(state.XPR), std::end(state.XPR), std::begin(state.register_log[state.reglog_idx].reg_file));
+
+  //   // memcpy(state.register_log[state.reglog_idx].reg_file, state.XPR, sizeof(reg_log));
+  // }
+
   void set_debug(bool value);
   void set_histogram(bool value);
+  void set_opcode_histogram(bool value);
   void enable_log_commits();
   bool get_log_commits_enabled() const { return log_commits_enabled; }
   void reset();
@@ -332,6 +369,7 @@ public:
   const char* get_privilege_string();
   void update_histogram(reg_t pc);
   void update_opcode_histogram(insn_t insn);
+  const char* print_opcode_name(insn_t insn);
   const disassembler_t* get_disassembler() { return disassembler; }
 
   FILE *get_log_file() { return log_file; }

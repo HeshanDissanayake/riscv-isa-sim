@@ -515,6 +515,10 @@
 #define MATCH_REGSW 0x200006b  
 #define MASK_REGSW 0xfe00707f
 
+#define MATCH_REGSW_C 0x4023
+#define MASK_REGSW_C 0x707f
+
+
 #define MATCH_ADD 0x33
 #define MASK_ADD 0xfe00707f
 #define MATCH_ADD_UW 0x800003b
@@ -3015,6 +3019,7 @@
 
 /*new instruction - regsw(register file switching)*/
 DECLARE_INSN(regsw, MATCH_REGSW, MASK_REGSW)
+DECLARE_INSN(regsw_c, MATCH_REGSW_C, MASK_REGSW_C)
 
 DECLARE_INSN(add, MATCH_ADD, MASK_ADD)
 DECLARE_INSN(add_uw, MATCH_ADD_UW, MASK_ADD_UW)

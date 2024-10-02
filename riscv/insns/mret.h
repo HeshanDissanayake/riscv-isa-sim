@@ -1,3 +1,9 @@
+p->get_state()->regfile_config_rs1 = p->get_state()->last_regfile_config_rs1;
+p->get_state()->regfile_config_rs2 = p->get_state()->last_regfile_config_rs2;
+p->get_state()->regfile_config_rd = p->get_state()->last_regfile_config_rd;
+p->get_state()->reg_switched = true;
+printf("mret --> rs1: %ld rs2: %ld rd: %ld\n", p->get_state()->last_regfile_config_rs1, p->get_state()->last_regfile_config_rs2, p->get_state()->last_regfile_config_rd);
+
 require_privilege(PRV_M);
 set_pc_and_serialize(p->get_state()->mepc->read());
 reg_t s = STATE.mstatus->read();

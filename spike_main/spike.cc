@@ -328,6 +328,7 @@ int main(int argc, char** argv)
   bool debug = false;
   bool halted = false;
   bool histogram = false;
+  bool opcode_histogram = false;
   bool log = false;
   bool UNUSED socket = false;  // command line option -s
   bool dump_dts = false;
@@ -379,6 +380,7 @@ int main(int argc, char** argv)
   parser.option('h', "help", 0, [&](const char UNUSED *s){help(0);});
   parser.option('d', 0, 0, [&](const char UNUSED *s){debug = true;});
   parser.option('g', 0, 0, [&](const char UNUSED *s){histogram = true;});
+  parser.option('z', 0, 0, [&](const char UNUSED *s){opcode_histogram = true;});
   parser.option('l', 0, 0, [&](const char UNUSED *s){log = true;});
 #ifdef HAVE_BOOST_ASIO
   parser.option('s', 0, 0, [&](const char UNUSED *s){socket = true;});
@@ -552,6 +554,7 @@ int main(int argc, char** argv)
   s.set_debug(debug);
   s.configure_log(log, log_commits);
   s.set_histogram(histogram);
+  s.set_opcode_histogram(opcode_histogram);
 
   auto return_code = s.run();
 

@@ -22,6 +22,8 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+#include <cstring>  
+
 
 #ifdef __GNUC__
 # pragma GCC diagnostic ignored "-Wunused-variable"
@@ -582,6 +584,12 @@ void processor_t::set_histogram(bool value)
   histogram_enabled = value;
 }
 
+void processor_t::set_opcode_histogram(bool value)
+{
+  opcode_histogram_enabled = value;
+}
+
+
 void processor_t::enable_log_commits()
 {
   log_commits_enabled = true;
@@ -680,12 +688,34 @@ void processor_t::set_mmu_capability(int cap)
 }
 
 void processor_t::take_interrupt(reg_t pending_interrupts)
-{
+{ 
+
+  // if (strcmp(print_opcode_name(get_state()->curr_pc), "regsw") == 0)
+  // {
+  //   if(state.temp == 1){
+  //     printf("interrupt pc: 0x%016lx \n", state.pc);
+  //     state.interupt_triggered = 1;
+  //     state.temp = 0;
+  //   }
+  // }
+  
+  // get_state()->last_regfile_config_rs1 = get_state()->regfile_config_rs1;
+  // get_state()->last_regfile_config_rs2 = get_state()->regfile_config_rs2;
+  // get_state()->last_regfile_config_rd  = get_state()->regfile_config_rd;
+
+
+  // get_state()->regfile_config_rs1 = 0;
+  // get_state()->regfile_config_rs2 = 0;
+  // get_state()->regfile_config_rd = 0;
+
+
   // Do nothing if no pending interrupts
   if (!pending_interrupts) {
+    // printf("returned from interrupt\n");
+    get_state()->interupt_triggered = 0;
     return;
   }
-
+ 
   // Exit WFI if there are any pending interrupts
   in_wfi = false;
 
@@ -810,6 +840,15 @@ void processor_t::debug_output_log(std::stringstream *s)
 void processor_t::take_trap(trap_t& t, reg_t epc)
 {
   unsigned max_xlen = isa->get_max_xlen();
+  
+  // printf("trap pc: 0x%016lx, cause: 0x%016lx\n", state.pc, t.cause());
+  // return;
+
+  get_state()->last_regfile_config_rs1 = get_state()->regfile_config_rs1;
+  get_state()->last_regfile_config_rs2 = get_state()->regfile_config_rs2;
+  get_state()->last_regfile_config_rd  = get_state()->regfile_config_rd;
+
+  // printf("take trap --> rs1: %ld rs2: %ld rd: %ld\n", get_state()->last_regfile_config_rs1, get_state()->last_regfile_config_rs2, get_state()->last_regfile_config_rd);
 
   if (debug) {
     std::stringstream s; // first put everything in a string, later send it to output
@@ -829,6 +868,8 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
     } else {
       state.pc = DEBUG_ROM_TVEC;
     }
+    
+
     return;
   }
 
@@ -904,6 +945,7 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
     set_privilege(PRV_S, false);
   } else {
     // Handle the trap in M-mode
+    
     const reg_t vector = (state.mtvec->read() & 1) && interrupt ? 4 * bit : 0;
     const reg_t trap_handler_address = (state.mtvec->read() & ~(reg_t)1) + vector;
     // RNMI exception vector is implementation-defined.  Since we don't model
@@ -933,7 +975,10 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
 }
 
 void processor_t::take_trigger_action(triggers::action_t action, reg_t breakpoint_tval, reg_t epc, bool virt)
-{
+{ 
+  // printf("trigger action pc: 0x%016lx \n", state.pc);
+ 
+
   if (debug) {
     std::stringstream s; // first put everything in a string, later send it to output
     s << "core " << std::dec << std::setfill(' ') << std::setw(3) << id
