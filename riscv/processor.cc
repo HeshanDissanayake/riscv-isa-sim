@@ -101,8 +101,10 @@ processor_t::~processor_t()
   {
     for (auto it : opcode_histogram)
       fprintf(stderr, "%s - %ld\n", it.first.c_str(), it.second);
-
   }
+
+  for (auto it : state.regsw_histogram)
+      fprintf(stderr, "%ld - %ld\n", it.first, it.second);
 
   delete mmu;
   delete disassembler;
@@ -689,7 +691,6 @@ void processor_t::set_mmu_capability(int cap)
 
 void processor_t::take_interrupt(reg_t pending_interrupts)
 { 
-
   // if (strcmp(print_opcode_name(get_state()->curr_pc), "regsw") == 0)
   // {
   //   if(state.temp == 1){
@@ -844,9 +845,11 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
   // printf("trap pc: 0x%016lx, cause: 0x%016lx\n", state.pc, t.cause());
   // return;
 
-  get_state()->last_regfile_config_rs1 = get_state()->regfile_config_rs1;
-  get_state()->last_regfile_config_rs2 = get_state()->regfile_config_rs2;
-  get_state()->last_regfile_config_rd  = get_state()->regfile_config_rd;
+  // get_state()->last_regfile_config_rs1 = get_state()->regfile_config_rs1;
+  // get_state()->last_regfile_config_rs2 = get_state()->regfile_config_rs2;
+  // get_state()->last_regfile_config_rd  = get_state()->regfile_config_rd;
+  
+  get_state()->regsw_enable = 0;
 
   // printf("take trap --> rs1: %ld rs2: %ld rd: %ld\n", get_state()->last_regfile_config_rs1, get_state()->last_regfile_config_rs2, get_state()->last_regfile_config_rd);
 
@@ -977,7 +980,7 @@ void processor_t::take_trap(trap_t& t, reg_t epc)
 void processor_t::take_trigger_action(triggers::action_t action, reg_t breakpoint_tval, reg_t epc, bool virt)
 { 
   // printf("trigger action pc: 0x%016lx \n", state.pc);
- 
+  get_state()->regsw_enable = 0;
 
   if (debug) {
     std::stringstream s; // first put everything in a string, later send it to output

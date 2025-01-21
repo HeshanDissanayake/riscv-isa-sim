@@ -202,16 +202,23 @@ static inline reg_t execute_insn_fast(processor_t* p, reg_t pc, insn_fetch_t fet
 
  // Debug code additions  --------------------------
 
- 
+  if ((p->get_state()->regsw_counter > 0) && (p->get_state()->regsw_enable == 1 )){
+    int bank_config = (p->get_state()->regsw_state >> (p->get_state()->regsw_counter -1)*3) & 7;
 
-  if (!p->get_state()->reg_switched){
-    
+    p->get_state()->regfile_config_rd  = (bank_config >> 2) & 1;
+    p->get_state()->regfile_config_rs1 = (bank_config >> 1) & 1;
+    p->get_state()->regfile_config_rs2 = (bank_config >> 0) & 1;
+    // printf("counter: %ld banks: %d rs1: %ld rs2: %ld rd: %ld \n", p->get_state()->regsw_counter , bank_config, p->get_state()->regfile_config_rs1, p->get_state()->regfile_config_rs2, p->get_state()->regfile_config_rd );
+    p->get_state()->regsw_counter --;
+
+  }else{
+    p->get_state()->regfile_config_rd  = 0;
     p->get_state()->regfile_config_rs1 = 0;
-    p->get_state()->regfile_config_rs2 = 0;
-    p->get_state()->regfile_config_rd = 0;
+    p->get_state()->regfile_config_rs2 = 0;    
   }
 
   p->get_state()->reg_switched = false;
+  
   return fetch.func(p, fetch.insn, pc);
 }
 static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t fetch)
@@ -221,10 +228,20 @@ static inline reg_t execute_insn_logged(processor_t* p, reg_t pc, insn_fetch_t f
     // printf("its pc \n");
   }
 
-  if (!p->get_state()->reg_switched){
+  if (p->get_state()->regsw_counter > 0 && p->get_state()->regsw_enable ){
+
+    int bank_config = (p->get_state()->regsw_state >> (p->get_state()->regsw_counter -1)*3) & 7;
+
+    p->get_state()->regfile_config_rd  = (bank_config >> 2) & 1;
+    p->get_state()->regfile_config_rs1 = (bank_config >> 1) & 1;
+    p->get_state()->regfile_config_rs2 = (bank_config >> 0) & 1;
+    // printf("counter: %ld banks: %d rs1: %ld rs2: %ld rd: %ld \n", p->get_state()->regsw_counter , bank_config, p->get_state()->regfile_config_rs1, p->get_state()->regfile_config_rs2, p->get_state()->regfile_config_rd );
+    p->get_state()->regsw_counter = p->get_state()->regsw_counter -1;
+
+  }else{
+    p->get_state()->regfile_config_rd  = 0;
     p->get_state()->regfile_config_rs1 = 0;
-    p->get_state()->regfile_config_rs2 = 0;
-    p->get_state()->regfile_config_rd = 0;
+    p->get_state()->regfile_config_rs2 = 0;    
   }
 
   p->get_state()->reg_switched = false;

@@ -89,7 +89,10 @@ struct state_t
   uint64_t inst_count;
 
   reg_t regsw_state; 
-  reg_t regsw_counter = REGSW_QUOTA;
+  reg_t regsw_counter = 0;
+  reg_t regsw_enable  = 1;
+
+  std::unordered_map<reg_t,uint64_t> regsw_histogram;
 
   insn_t curr_pc;
   insn_t prev_inst;

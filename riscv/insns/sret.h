@@ -2,7 +2,6 @@
 
 // printf("mret --> rs1: %ld rs2: %ld rd: %ld\n", p->get_state()->last_regfile_config_rs1, p->get_state()->last_regfile_config_rs2, p->get_state()->last_regfile_config_rd);
 
-
 require_extension('S');
 reg_t prev_hstatus = STATE.hstatus->read();
 if (STATE.v) {
@@ -12,6 +11,8 @@ if (STATE.v) {
   require_privilege(get_field(STATE.mstatus->read(), MSTATUS_TSR) ? PRV_M : PRV_S);
 }
 reg_t next_pc = p->get_state()->sepc->read();
+// printf("sret -->  0x%016lx \n", next_pc);
+
 set_pc_and_serialize(next_pc);
 reg_t s = STATE.sstatus->read();
 reg_t prev_prv = get_field(s, MSTATUS_SPP);
@@ -43,7 +44,9 @@ STATE.sstatus->write(s);
 p->set_privilege(prev_prv, prev_virt);
 p->get_state()->interupt_triggered = 0;
 
-p->get_state()->regfile_config_rs1 = p->get_state()->last_regfile_config_rs1;
-p->get_state()->regfile_config_rs2 = p->get_state()->last_regfile_config_rs2;
-p->get_state()->regfile_config_rd = p->get_state()->last_regfile_config_rd;
-p->get_state()->reg_switched = true;
+// p->get_state()->regfile_config_rs1 = p->get_state()->last_regfile_config_rs1;
+// p->get_state()->regfile_config_rs2 = p->get_state()->last_regfile_config_rs2;
+// p->get_state()->regfile_config_rd = p->get_state()->last_regfile_config_rd;
+// p->get_state()->reg_switched = true;
+p->get_state()->regsw_counter++;
+p->get_state()->regsw_enable = 1;
